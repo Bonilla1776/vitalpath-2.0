@@ -1,17 +1,40 @@
+name: Deploy Backend
 
-        uses: actions/checkout@v4
+on:
+  push:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
+    branches:
+      - main
 
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
 
-      - name: Build and Push Backend Docker Image
-        run: |
-          docker build -t vitalpath-backend ./backend
-          docker tag vitalpath-backend vitalpathregistry.azurecr.io/vitalpath-backend:latest
-          docker push vitalpathregistry.azurecr.io/vitalpath-backend:latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Restart Backend App Service
-        run: |
-          az webapp restart --name vitalpath-backend --resource-group vitalpath-backend_group
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        cd backend
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Azure Login
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: vitalpath-backend
+        slot-name: Production
+        package: backend
