@@ -1,0 +1,17 @@
+
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Build and Push Backend Docker Image
+        run: |
+          docker build -t vitalpath-backend ./backend
+          docker tag vitalpath-backend vitalpathregistry.azurecr.io/vitalpath-backend:latest
+          docker push vitalpathregistry.azurecr.io/vitalpath-backend:latest
+
+      - name: Restart Backend App Service
+        run: |
+          az webapp restart --name vitalpath-backend --resource-group vitalpath-backend_group
