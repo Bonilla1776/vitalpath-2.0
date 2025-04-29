@@ -1,4 +1,4 @@
-name: Build and Deploy VitalPath Backend
+name: Build and Deploy VitalPath Backend to ACA
 
 on:
   push:
@@ -40,9 +40,14 @@ jobs:
         push: true
         tags: vitalpathregistry.azurecr.io/vitalpathbackend:latest
 
-    - name: Deploy Backend to Azure Web App
-      uses: azure/webapps-deploy@v3
+    - name: Deploy to Azure Container Apps (ACA)
+      uses: azure/CLI@v2
       with:
-        app-name: vitalpath-backend
-        images: vitalpathregistry.azurecr.io/vitalpathbackend:latest
+        inlineScript: |
+          az containerapp update \
+            --name vitalpath-backend \
+            --resource-group vitalpath-backend_group \
+            --image vitalpathregistry.azurecr.io/vitalpathbackend:latest \
+            --registry-server vitalpathregistry.azurecr.io
+
 
