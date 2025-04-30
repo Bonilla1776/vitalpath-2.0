@@ -14,20 +14,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Log in to Azure using publish profile
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D22B8492179E4369A91CD387AE54AE9D }}
+      - name: Log in to DockerHub (optional, if you're using private base image)
+        run: echo "Skip if not needed"
 
       - name: Build Docker image
-        run: |
-          docker build -t vitalpath-frontend:latest ./frontend
+        run: docker build -t vitalpath-frontend ./frontend
 
-      - name: Push image to Azure App Service
+      - name: Deploy to Azure Web App (container)
         uses: azure/webapps-deploy@v2
         with:
           app-name: vitalpath-frontend
           slot-name: production
-          images: vitalpath-frontend:latest
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D22B8492179E4369A91CD387AE54AE9D }}
+          images: vitalpath-frontend
+
 
 
