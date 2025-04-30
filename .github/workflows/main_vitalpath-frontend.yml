@@ -1,55 +1,33 @@
-name: Azure Static Web Apps CI/CD
+name: Deploy Frontend Container to Azure App Service
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - main
 
 jobs:
-  build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+  build-and-deploy:
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
+    name: Build and Deploy Frontend Container
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Azure using publish profile
+        uses: azure/login@v1
         with:
-          submodules: true
-          lfs: false
+          creds: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D22B8492179E4369A91CD387AE54AE9D }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Build Docker image
+        run: |
+          docker build -t vitalpath-frontend:latest ./frontend
+
+      - name: Push image to Azure App Service
+        uses: azure/webapps-deploy@v2
         with:
-          node-version: '18'
+          app-name: vitalpath-frontend
+          slot-name: production
+          images: vitalpath-frontend:latest
 
-      - name: Install dependencies
-        run: npm ci
-        working-directory: ./frontend
 
-      - name: Build Next.js static export
-        run: npm run build
-        working-directory: ./frontend
-
-      - name: Deploy to Azure Static Web Apps
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "upload"
-          app_location: "frontend"
-          api_location: ""
-          output_location: "frontend/out"
-
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-    steps:
-      - name: Close Pull Request
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          action: "close"
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
