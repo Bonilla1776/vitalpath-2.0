@@ -17,7 +17,8 @@ jobs:
       - name: 🔐 Log in to Azure using publish profile
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D22B8492179E4369A91CD387AE54AE9D }}
+
 
       - name: 🏗️ Build Docker image for frontend
         run: |
@@ -42,7 +43,9 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: vitalpath-frontend
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D22B8492179E4369A91CD387AE54AE9D }}
           images: ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/vitalpath-frontend:${{ github.sha }}
+        
 
 
 
