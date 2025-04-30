@@ -47,7 +47,4 @@ jobs:
           az containerapp update \
             --name vitalpath-backend \
             --resource-group vitalpath-backend_group \
-            --image vitalpathregistry.azurecr.io/vitalpathbackend:latest \
-            --registry-server vitalpathregistry.azurecr.io
-
-
+            --image vitalpathregistry.azurecr.io/vitalpathbackend:latest
