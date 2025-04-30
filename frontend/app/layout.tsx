@@ -1,12 +1,23 @@
-// frontend/app/layout.tsx
+import './globals.css';
+import { Providers } from './providers';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-    return (
-      <html lang="en">
-        <body style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-          {children}
-        </body>
-      </html>
-    );
-  }
+  return (
+    <html lang="en">
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
+}
+
+
+
+
+
+
+
+
+
+
   

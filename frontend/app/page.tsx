@@ -2,17 +2,12 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useRouter } from 'next/navigation';
-import NextLink from 'next/link';
 import {
   Box,
   Button,
   Flex,
   Heading,
-  Stack,
   Text,
-  VStack,
-  useColorModeValue,
   SimpleGrid,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
@@ -20,31 +15,33 @@ import { motion } from 'framer-motion';
 const MotionHeading = motion(Heading);
 const MotionText = motion(Text);
 
-export default function Home() {
-  const headingColor = useColorModeValue('purple.700', 'purple.300');
-  const subtextColor = useColorModeValue('gray.700', 'gray.300');
-  const cardBg = useColorModeValue('rgba(255,255,255,0.6)', 'rgba(26,32,44,0.6)');
-  const overlayBg = useColorModeValue('transparent', 'transparent');
+const headingColor = 'purple.700';
+const subtextColor = 'gray.700';
+const cardBg = 'rgba(255,255,255,0.6)';
+const overlayBg = 'transparent';
 
+export default function Home() {
   return (
     <Box position="relative" minH="100vh" overflow="hidden">
-      <Box
-        as="video"
+      <video
         autoPlay
         muted
         loop
         playsInline
-        position="fixed"
-        top={0}
-        left={0}
-        width="100vw"
-        height="100vh"
-        objectFit="cover"
-        zIndex={0}
-        style={{ transform: 'scale(1.05)', objectPosition: 'top center' }}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          objectFit: 'cover',
+          zIndex: 0,
+          transform: 'scale(1.05)',
+          objectPosition: 'top center',
+        }}
       >
         <source src="/LandingPage10secvid.mp4" type="video/mp4" />
-      </Box>
+      </video>
 
       <Box
         position="relative"
@@ -86,7 +83,7 @@ export default function Home() {
           </MotionText>
         </Box>
 
-        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6} width="100%">
+        <SimpleGrid columns={{ base: 1, md: 3 }} gap={6} width="100%">
           <Box bg={cardBg} borderRadius="lg" p={6} boxShadow="lg">
             <Text color={headingColor}>
               Your personal AI Health Coach is ready to listen deeply, spark inspiration, and provide unwavering support as you create lasting well-being.
@@ -118,9 +115,7 @@ export default function Home() {
         </Box>
 
         <Flex gap={4} wrap="wrap" justify="center">
-          <Button
-            as={NextLink}
-            href="/api/auth/signin"
+          <Button as={"button"} onClick={() => window.location.href = '/api/auth/signin'}
             size="lg"
             colorScheme="purple"
             px={10}
@@ -130,9 +125,7 @@ export default function Home() {
           >
             Join the Study
           </Button>
-          <Button
-            as={NextLink}
-            href="/api/auth/signin"
+          <Button as={"button"} onClick={() => window.location.href = '/api/auth/signin'}
             size="lg"
             variant="outline"
             colorScheme="purple"
