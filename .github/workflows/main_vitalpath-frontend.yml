@@ -1,4 +1,4 @@
-name: Deploy Frontend Container to Azure App Service
+name: Deploy Frontend to Azure App Service (Docker)
 
 on:
   push:
@@ -8,25 +8,42 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    name: Build and Deploy Frontend Container
+    name: Build and Deploy Container to Azure
 
     steps:
-      - name: Checkout code
+      - name: ⏬ Checkout code
         uses: actions/checkout@v4
 
-      - name: Log in to DockerHub (optional, if you're using private base image)
-        run: echo "Skip if not needed"
+      - name: 🔐 Log in to Azure using publish profile
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
 
-      - name: Build Docker image
-        run: docker build -t vitalpath-frontend ./frontend
+      - name: 🏗️ Build Docker image for frontend
+        run: |
+          docker build -t vitalpath-frontend:${{ github.sha }} ./frontend
 
-      - name: Deploy to Azure Web App (container)
+      - name: 🏷️ Tag Docker image for ACR
+        run: |
+          docker tag vitalpath-frontend:${{ github.sha }} \
+            ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/vitalpath-frontend:${{ github.sha }}
+
+      - name: 🔑 Log in to ACR
+        run: |
+          echo "${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }}" | docker login \
+            ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }} \
+            -u ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }} --password-stdin
+
+      - name: 📤 Push image to ACR
+        run: |
+          docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/vitalpath-frontend:${{ github.sha }}
+
+      - name: 🚀 Deploy container to Azure App Service
         uses: azure/webapps-deploy@v2
         with:
           app-name: vitalpath-frontend
-          slot-name: production
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D22B8492179E4369A91CD387AE54AE9D }}
-          images: vitalpath-frontend
+          images: ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/vitalpath-frontend:${{ github.sha }}
+
 
 
 
