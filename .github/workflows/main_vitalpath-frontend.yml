@@ -8,40 +8,39 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    name: Build and Deploy Frontend Container
+    name: Build and Deploy Container to Azure App Service
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Log in to Azure using Service Principal
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Log in to Azure Container Registry
+      - name: Log in to Azure Container Registry (ACR)
         run: |
-          echo "${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }}" | docker login \
-            ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }} \
-            -u ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }} --password-stdin
+          echo "${{ secrets.ACR_PASSWORD }}" | docker login vitalpathregistry.azurecr.io \
+            --username ${{ secrets.ACR_USERNAME }} --password-stdin
 
-      - name: Build Docker image for frontend
+      - name: Build Docker image
         run: |
           docker build -t vitalpath-frontend ./frontend
 
       - name: Tag Docker image
         run: |
-          docker tag vitalpath-frontend:latest \
-            ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/vitalpath-frontend:latest
+          docker tag vitalpath-frontend:latest vitalpathregistry.azurecr.io/vitalpath-frontend:latest
 
-      - name: Push Docker image to ACR
+      - name: Push image to ACR
         run: |
-          docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/vitalpath-frontend:latest
+          docker push vitalpathregistry.azurecr.io/vitalpath-frontend:latest
 
-      - name: Deploy to Azure App Service (via Publish Profile)
+      - name: Deploy container to Azure App Service
         uses: azure/webapps-deploy@v2
         with:
           app-name: vitalpath-frontend
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D22B8492179E4369A91CD387AE54AE9D }}
-          images: ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/vitalpath-frontend:latest
+          images: vitalpathregistry.azurecr.io/vitalpath-frontend:latest
 
         
 
