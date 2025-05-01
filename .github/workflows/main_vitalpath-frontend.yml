@@ -40,9 +40,8 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: vitalpath-frontend
-          images: vitalpathregistry.azurecr.io/vitalpath-frontend:latest
-
-        
+          images: ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/vitalpath-frontend:latest
+          resource-group-name: vitalpath-frontend_group  
 
 
 
