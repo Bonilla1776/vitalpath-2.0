@@ -8,40 +8,41 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    name: Build and Deploy Container to Azure App Service
+    name: Build and Deploy Frontend Container
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Log in to Azure using Service Principal
+      - name: Log in to Azure
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Log in to Azure Container Registry (ACR)
-        run: |
-          echo "${{ secrets.ACR_PASSWORD }}" | docker login vitalpathregistry.azurecr.io \
-            --username ${{ secrets.ACR_USERNAME }} --password-stdin
-
       - name: Build Docker image
         run: |
-          docker build -t vitalpath-frontend ./frontend
+          docker build -t vitalpath-frontend:latest ./frontend
 
-      - name: Tag Docker image
+      - name: Tag Docker image for Azure Container Registry
         run: |
-          docker tag vitalpath-frontend:latest vitalpathregistry.azurecr.io/vitalpath-frontend:latest
+          docker tag vitalpath-frontend:latest ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/vitalpath-frontend:latest
+
+      - name: Log in to ACR
+        run: |
+          echo "${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }}" | docker login ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }} \
+            -u ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }} --password-stdin
 
       - name: Push image to ACR
         run: |
-          docker push vitalpathregistry.azurecr.io/vitalpath-frontend:latest
+          docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/vitalpath-frontend:latest
 
       - name: Deploy container to Azure App Service
         uses: azure/webapps-deploy@v2
         with:
           app-name: vitalpath-frontend
+          resource-group-name: vitalpath-frontend_group
           images: ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/vitalpath-frontend:latest
-          resource-group-name: vitalpath-frontend_group  
+
 
 
 
