@@ -1,4 +1,4 @@
-name: Deploy Frontend to Azure App Service (Docker)
+name: Deploy Frontend to Azure App Service
 
 on:
   push:
@@ -17,33 +17,32 @@ jobs:
       - name: Log in to Azure using publish profile
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
 
       - name: Build Docker image
         run: |
           docker build -t vitalpath-frontend ./frontend
 
-      - name: Tag image for Azure Container Registry
+      - name: Tag Docker image for Azure
         run: |
-          docker tag vitalpath-frontend:latest \
-            ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/vitalpath-frontend:latest
+          docker tag vitalpath-frontend:latest vitalpathregistry.azurecr.io/vitalpath-frontend:latest
 
       - name: Log in to Azure Container Registry
         run: |
           echo "${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }}" | docker login \
-            ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }} \
+            vitalpathregistry.azurecr.io \
             -u ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }} --password-stdin
 
-      - name: Push image to ACR
+      - name: Push image to Azure Container Registry
         run: |
-          docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/vitalpath-frontend:latest
+          docker push vitalpathregistry.azurecr.io/vitalpath-frontend:latest
 
       - name: Deploy container to Azure App Service
         uses: azure/webapps-deploy@v2
         with:
           app-name: vitalpath-frontend
-          images: ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/vitalpath-frontend:latest
-          resource-group-name: vitalpath-frontend_group
+          images: vitalpathregistry.azurecr.io/vitalpath-frontend:latest
+
 
 
 
