@@ -115,7 +115,9 @@ export default function Home() {
         </Box>
 
         <Flex gap={4} wrap="wrap" justify="center">
-          <Button as={"button"} onClick={() => window.location.href = '/api/auth/signin'}
+          <Button
+            as="a"
+            href="/registration"
             size="lg"
             colorScheme="purple"
             px={10}
@@ -125,7 +127,9 @@ export default function Home() {
           >
             Join the Study
           </Button>
-          <Button as={"button"} onClick={() => window.location.href = '/api/auth/signin'}
+          <Button
+            as="a"
+            href="/login"
             size="lg"
             variant="outline"
             colorScheme="purple"
