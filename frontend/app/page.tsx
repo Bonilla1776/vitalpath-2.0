@@ -1,151 +1,97 @@
 'use client';
 
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+
 export const dynamic = 'force-dynamic';
 
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Text,
-  SimpleGrid,
-} from '@chakra-ui/react';
-import { motion } from 'framer-motion';
-
-const MotionHeading = motion(Heading);
-const MotionText = motion(Text);
-
-const headingColor = 'purple.700';
-const subtextColor = 'gray.700';
-const cardBg = 'rgba(255,255,255,0.6)';
-const overlayBg = 'transparent';
+const MotionHeading = motion.h1;
+const MotionText = motion.p;
 
 export default function Home() {
   return (
-    <Box position="relative" minH="100vh" overflow="hidden">
+    <div className="relative min-h-screen overflow-hidden">
       <video
         autoPlay
         muted
         loop
         playsInline
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          objectFit: 'cover',
-          zIndex: 0,
-          transform: 'scale(1.05)',
-          objectPosition: 'top center',
-        }}
+        className="fixed top-0 left-0 w-full h-full object-cover object-top scale-105 z-0"
       >
         <source src="/LandingPage10secvid.mp4" type="video/mp4" />
       </video>
 
-      <Box
-        position="relative"
-        zIndex={1}
-        px={{ base: 4, md: 10 }}
-        py={{ base: 12, md: 24 }}
-        bg={overlayBg}
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        minH="100vh"
-        gap={10}
-      >
-        <Box bg={cardBg} borderRadius="lg" p={6} boxShadow="lg" textAlign="center">
-          <Flex gap={6} wrap="wrap" justify="center">
-            <img src="/ualr-logo.png" alt="UA Little Rock Logo" width={100} height={100} />
-            <img src="/vitalpath-logo.png" alt="VitalPath Logo" width={100} height={100} />
-          </Flex>
+      <div className="relative z-10 flex flex-col items-center justify-center px-4 md:px-10 py-12 md:py-24 min-h-screen gap-10">
+        <div className="bg-white/60 rounded-lg p-6 shadow-lg text-center">
+          <div className="flex flex-wrap justify-center items-center gap-6">
+            <Image src="/ualr-logo.png" alt="UA Little Rock Logo" width={100} height={100} />
+            <Image src="/vitalpath-logo.png" alt="VitalPath Logo" width={100} height={100} />
+          </div>
+
           <MotionHeading
-            size="3xl"
-            fontWeight="extrabold"
-            color={headingColor}
-            mt={4}
+            className="text-4xl md:text-5xl font-extrabold text-purple-700 mt-6"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            Welcome to <Text as="span" color="green.400">VitalPath</Text> <Text as="span" color={headingColor}>Research</Text> 🌿
+            Welcome to <span className="text-green-400">VitalPath</span>{' '}
+            <span className="text-purple-700">Research</span> 🌿
           </MotionHeading>
+
           <MotionText
-            fontSize="xl"
-            color={subtextColor}
+            className="text-xl text-gray-700 mt-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
             Begin Your 100-Day Transformation Journey, and discover your potential with AI
           </MotionText>
-        </Box>
+        </div>
 
-        <SimpleGrid columns={{ base: 1, md: 3 }} gap={6} width="100%">
-          <Box bg={cardBg} borderRadius="lg" p={6} boxShadow="lg">
-            <Text color={headingColor}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+          <div className="bg-white/60 rounded-lg p-6 shadow-lg">
+            <p className="text-purple-700">
               Your personal AI Health Coach is ready to listen deeply, spark inspiration, and provide unwavering support as you create lasting well-being.
-            </Text>
-          </Box>
-          <Box bg={cardBg} borderRadius="lg" p={6} boxShadow="lg">
-            <Text color={headingColor}>
+            </p>
+          </div>
+          <div className="bg-white/60 rounded-lg p-6 shadow-lg">
+            <p className="text-purple-700">
               VitalPath uses advanced AI to ask the right questions at the right time, reflecting your own wisdom back to you and gently guiding you past obstacles toward the changes that matter most to you.
-            </Text>
-          </Box>
-          <Box bg={cardBg} borderRadius="lg" p={6} boxShadow="lg">
-            <Text color={headingColor}>
+            </p>
+          </div>
+          <div className="bg-white/60 rounded-lg p-6 shadow-lg">
+            <p className="text-purple-700">
               Discover what becomes possible when technology truly understands and supports your wellness journey.
-            </Text>
-          </Box>
-        </SimpleGrid>
+            </p>
+          </div>
+        </div>
 
-        <Box
-          bg={cardBg}
-          py={4}
-          px={6}
-          borderRadius="lg"
-          boxShadow="lg"
-          textAlign="center"
-        >
-          <Text color={headingColor} fontWeight="medium">
+        <div className="bg-white/60 py-4 px-6 rounded-lg shadow-lg text-center">
+          <p className="text-purple-700 font-medium">
             Participation is free and limited to 100 individuals. Join now to secure your spot!
-          </Text>
-        </Box>
+          </p>
+        </div>
 
-        <Flex gap={4} wrap="wrap" justify="center">
-          <Button
-            as="a"
+        <div className="flex flex-wrap gap-4 justify-center">
+          <a
             href="/registration"
-            size="lg"
-            colorScheme="purple"
-            px={10}
-            py={6}
-            borderRadius="full"
-            fontWeight="bold"
+            className="px-10 py-6 bg-purple-600 hover:bg-purple-700 text-white text-lg rounded-full font-bold transition"
           >
             Join the Study
-          </Button>
-          <Button
-            as="a"
+          </a>
+          <a
             href="/login"
-            size="lg"
-            variant="outline"
-            colorScheme="purple"
-            px={10}
-            py={6}
-            borderRadius="full"
-            fontWeight="bold"
+            className="px-10 py-6 border-2 border-purple-600 text-purple-600 text-lg rounded-full font-bold hover:bg-purple-50 transition"
           >
             Return User Login
-          </Button>
-        </Flex>
+          </a>
+        </div>
 
-        <Text fontSize="sm" pt={10} color="gray.500" textAlign="center">
+        <p className="text-sm pt-10 text-gray-500 text-center">
           VitalPath Innovations, LLC • Research led by John-Eric Bonilla • UA Little Rock
-        </Text>
-      </Box>
-    </Box>
+        </p>
+      </div>
+    </div>
   );
 }
+

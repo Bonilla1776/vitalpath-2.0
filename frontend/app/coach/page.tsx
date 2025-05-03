@@ -1,12 +1,13 @@
 'use client';
 
-import { Box, Heading, Text } from '@chakra-ui/react';
-
 export default function CoachPage() {
   return (
-    <Box p={10}>
-      <Heading size="xl">AI Health Coach</Heading>
-      <Text mt={4}>Real-time voice-based coaching will appear here.</Text>
-    </Box>
+    <div className="p-10">
+      <h1 className="text-4xl font-bold text-gray-900">AI Health Coach</h1>
+      <p className="mt-4 text-lg text-gray-700">
+        Real-time voice-based coaching will appear here.
+      </p>
+    </div>
   );
 }
+

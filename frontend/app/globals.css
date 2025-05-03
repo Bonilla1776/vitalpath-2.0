@@ -1,27 +1,17 @@
-/* Reset some common defaults */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  html,
-  body {
-    width: 100%;
-    height: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    scroll-behavior: smooth;
-  }
-  
-  /* Allow full-bleed fixed video background */
-  video {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
-    z-index: -1;
-  }
-  
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom global styles */
+:root {
+  --font-figtree: 'Figtree', sans-serif;
+}
+
+body {
+  font-family: var(--font-figtree);
+  @apply bg-white text-gray-900 antialiased;
+}
+
+a {
+  @apply text-purple-600 hover:underline;
+}
