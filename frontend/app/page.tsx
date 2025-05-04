@@ -1,75 +1,114 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect, useRef } from 'react';
+
+const REGISTER_URL =
+  'https://vitalpathb2c.b2clogin.com/vitalpathb2c.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1_B2C_1A_signup_signin&client_id=02c10115-6abe-41b9-b856-13c6b2f272bb&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fvitalpath-frontend-h2eybkh9c4g0fsd2.westus2-01.azurewebsites.net%2Fauth%2Fcallback&scope=openid&response_type=code&prompt=login';
+
+const LOGIN_URL =
+  'https://vitalpathb2c.b2clogin.com/vitalpathb2c.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1_login_flow&client_id=02c10115-6abe-41b9-b856-13c6b2f272bb&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fvitalpath-frontend-h2eybkh9c4g0fsd2.westus2-01.azurewebsites.net%2Fauth%2Fcallback&scope=openid&response_type=code&prompt=login';
 
 export default function Home() {
-  const loginUrl =
-    'https://vitalpathb2c.b2clogin.com/vitalpathb2c.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1_login_flow&client_id=02c10115-6abe-41b9-b856-13c6b2f272bb&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fvitalpath-frontend-h2eybkh9c4g0fsd2.westus2-01.azurewebsites.net%2Fauth%2Fcallback&scope=openid&response_type=code&prompt=login';
+  const audioRef = useRef<HTMLAudioElement>(null);
 
-  const registerUrl =
-    'https://vitalpathb2c.b2clogin.com/vitalpathb2c.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1_B2C_1A_signup_signin&client_id=02c10115-6abe-41b9-b856-13c6b2f272bb&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fvitalpath-frontend-h2eybkh9c4g0fsd2.westus2-01.azurewebsites.net%2Fauth%2Fcallback&scope=openid&response_type=code&prompt=login';
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.volume = 0.2;
+      audio.play().catch(() => {
+        // Autoplay restrictions; user interaction needed
+      });
+    }
+  }, []);
 
   return (
-    <main className="relative h-screen w-screen overflow-hidden">
-      {/* Video background */}
+    <div className="relative min-h-screen w-full overflow-hidden text-white">
+      {/* Background video */}
       <video
         autoPlay
         muted
         loop
         playsInline
-        className="absolute inset-0 w-full h-full object-cover z-0"
+        className="absolute top-0 left-0 w-full h-full object-cover z-0"
       >
-        <source src="/videos/landingbg.mp4" type="video/mp4" />
+        <source src="/LandingPage10secvid.mp4" type="video/mp4" />
       </video>
 
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/60 z-10" />
+      {/* Ambient audio */}
+      <audio ref={audioRef} src="/ambient.mp3" loop />
 
-      {/* Content */}
-      <div className="relative z-20 flex flex-col items-center justify-center h-full px-4 text-center">
-        {/* Logos */}
-        <div className="flex items-center space-x-6 mb-8">
-          <Image
-            src="/images/ualr-logo.png"
-            alt="UALR Logo"
-            width={100}
-            height={100}
-            className="object-contain h-16 w-auto"
-          />
-          <Image
-            src="/images/vitalpath-logo.png"
-            alt="VitalPath Logo"
-            width={100}
-            height={100}
-            className="object-contain h-16 w-auto"
-          />
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/20 z-0" />
+
+      {/* Main content */}
+      <div className="relative z-10 flex flex-col min-h-screen justify-between px-6 py-12 sm:px-12 md:px-24 lg:px-32">
+        {/* Logo + Heading */}
+        <div className="text-center space-y-6">
+          <div className="flex justify-center gap-6 items-center">
+            <Image src="/ualr-logo.png" alt="UA Little Rock Logo" width={100} height={100} />
+          </div>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-snug text-white drop-shadow-lg animate-fade-in">
+            AI-Driven Motivational Interviewing
+            <span className="block text-purple-300 mt-2">
+              A Scalable Model for Personalized Health Coaching
+            </span>
+          </h1>
+          <p className="max-w-3xl mx-auto text-lg text-gray-200 animate-fade-in delay-150">
+            Join us in redefining behavioral health through compassionate, intelligent technology.
+          </p>
         </div>
 
-        {/* Center card */}
-        <div className="bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-2xl max-w-md w-full space-y-6">
-          <h1 className="text-3xl font-bold text-purple-700">Welcome to the VitalPath Study</h1>
-          <p className="text-gray-700 text-lg">
-            Begin your transformation journey. Register or log in to participate.
+        {/* Mission cards */}
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-up delay-300">
+          {[
+            'Your personal AI Health Coach listens deeply and supports your long-term well-being.',
+            'VitalPath uses AI to reflect your values and help you overcome real-world obstacles.',
+            'Discover what becomes possible when technology truly understands your wellness journey.',
+          ].map((text, idx) => (
+            <div
+              key={idx}
+              className="bg-white/5 backdrop-blur-3xl rounded-xl p-6 transition hover:scale-105 hover:bg-white/10 shadow-md"
+            >
+              <p className="text-md md:text-lg text-purple-300 font-medium">{text}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA Buttons */}
+        <div className="mt-12 flex flex-col items-center space-y-6 text-center animate-fade-in delay-500">
+          <p className="bg-purple-800/70 px-6 py-3 rounded-full font-semibold text-lg shadow-md">
+            Participation is free and limited to 100 individuals. Join now to secure your spot!
           </p>
-          <div className="space-y-4">
-            <a
-              href={registerUrl}
-              className="block w-full bg-purple-600 text-white font-semibold py-3 rounded-lg hover:bg-purple-700 transition"
+          <div className="flex flex-wrap gap-4 justify-center">
+            <button
+              onClick={() => (window.location.href = REGISTER_URL)}
+              className="bg-purple-600 hover:bg-purple-700 transition text-white px-8 py-3 rounded-full font-bold shadow-lg animate-pulse"
             >
               Join the Study
-            </a>
-            <a
-              href={loginUrl}
-              className="block w-full border border-purple-600 text-purple-600 font-semibold py-3 rounded-lg hover:bg-purple-50 transition"
+            </button>
+            <button
+              onClick={() => (window.location.href = LOGIN_URL)}
+              className="border-2 border-purple-400 hover:bg-purple-600 hover:text-white transition text-purple-200 px-8 py-3 rounded-full font-bold shadow-lg animate-pulse"
             >
-              Returning User Login
-            </a>
+              Return User Login
+            </button>
           </div>
         </div>
+
+        {/* Footer logo */}
+        <div className="absolute bottom-6 right-6 opacity-70">
+          <Image src="/vitalpath-logo.png" alt="VitalPath Logo" width={50} height={50} />
+        </div>
       </div>
-    </main>
+    </div>
   );
 }
+
+
+
+
+
 
 
 
