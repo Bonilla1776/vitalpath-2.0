@@ -1,33 +1,93 @@
 'use client';
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
+
 export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    try {
+      const res = await axios.post(
+        'https://vitalpath-backend.gentlepebble-9bae58f5.westus2.azurecontainerapps.io/auth/login',
+        new URLSearchParams({ username: email, password: password }),
+        { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+      );
+
+      localStorage.setItem('access_token', res.data.access_token);
+      router.push('/consent');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error('Login failed:', err.message);
+        setError('Login failed. Please check your credentials.');
+      } else {
+        console.error('Unknown login error:', err);
+        setError('An unexpected error occurred.');
+      }
+    }
+  };
+
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative min-h-screen w-full overflow-hidden flex items-center justify-center">
+      {/* Background Video */}
       <video
         autoPlay
         muted
         loop
         playsInline
-        className="fixed top-0 left-0 w-screen h-screen object-cover z-0 scale-[1.05] object-top"
+        className="absolute top-0 left-0 w-full h-full object-cover z-0"
       >
         <source src="/LoginPageVideo.mp4" type="video/mp4" />
       </video>
 
-      <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
-        <div className="bg-white/60 backdrop-blur-lg p-10 rounded-lg shadow-2xl text-center space-y-6 max-w-xl w-full">
-          <h1 className="text-3xl font-bold text-purple-700">
-            Returning User Login
-          </h1>
-          <p className="text-lg text-gray-700">
-            Sign in with your Azure account to access your dashboard and continue your transformation journey.
-          </p>
-          <a
-            href="https://vitalpathb2c.b2clogin.com/vitalpathb2c.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1_B2C_1A_signup_signin&client_id=02c10115-6abe-41b9-b856-13c6b2f272bb&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fvitalpath-frontend-h2eybkh9c4g0fsd2.westus2-01.azurewebsites.net%2Fauth%2Fcallback&scope=openid&response_type=code&prompt=login"
-            className="inline-block bg-purple-600 hover:bg-purple-700 text-white text-lg font-bold py-3 px-8 rounded-full transition"
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/40 z-0" />
+
+      {/* Form */}
+      <div className="relative z-10 bg-white/10 backdrop-blur-md rounded-2xl p-8 sm:p-10 md:p-12 shadow-2xl max-w-md w-full mx-4">
+        <h1 className="text-4xl font-extrabold text-center text-white mb-6">
+          Welcome Back
+        </h1>
+        {error && <p className="text-red-400 text-center mb-4">{error}</p>}
+        <form onSubmit={handleLogin} className="space-y-6">
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full px-4 py-3 rounded bg-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full px-4 py-3 rounded bg-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button
+            type="submit"
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-full transition duration-200"
           >
-            Login with Azure B2C
-          </a>
-        </div>
+            Login
+          </button>
+        </form>
+        <p className="mt-6 text-center text-sm text-white/80">
+          Don&apos;t have an account?{' '}
+          <span
+            onClick={() => router.push('/register')}
+            className="text-purple-300 hover:underline cursor-pointer"
+          >
+            Register
+          </span>
+        </p>
       </div>
     </div>
   );
